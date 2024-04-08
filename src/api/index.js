@@ -1,8 +1,9 @@
-import app from './app';
+import express from 'express';
+import catRouter from './routes/cat-router.js';
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const router = express.Router();
 
-app.listen(port, hostname, () => {
-   console.log(`Server running at http://${hostname}:${port}/`);
-});
+// bind base url for all cat routes to catRouter
+router.use('/cats', catRouter);
+
+export default router;
