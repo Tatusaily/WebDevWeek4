@@ -5,6 +5,7 @@ import {
   postUser,
   putUser,
   deleteUser,
+  getCatByUserID,
 } from '../controllers/user-controller.js';
 import multer from 'multer';
 
@@ -37,5 +38,8 @@ userRouter.route('/:id')
     .get(getUserById)
     .put(putUser)
     .delete(deleteUser);
+
+userRouter.route('/:id/cats')
+    .get(getCatByUserID);
 
 export default userRouter;

@@ -39,13 +39,36 @@ const modifyUser = async (user, id) => {
 }
 
 const removeUser = async (id) => {
-    const [rows] = await promisePool.execute('DELETE FROM users WHERE user_id = ?', [id]);
-    console.log('rows', rows);
-    if (rows.affectedRows === 0) {
+    const connection = await promisePool.getConnection();
+
+    try{
+        // Remove user's cats before removing the user
+        await connection.beginTransaction();
+        await connection.execute('DELETE FROM cats WHERE owner = ?', [id]);
+        const sql = connection.format('DELETE FROM users WHERE user_id = ?', [id]);
+        const [rows] = await connection.execute(sql);
+        console.log('rows', rows);
+        if (rows.affectedRows === 0) {
+            return {message: 'User not found'};
+        }
+        await connection.commit();
+        return {message: 'success'};
+
+    } catch (e) {
+        await connection.rollback();
+        console.error('ROLLBACK', e.message);
         return false;
+        
+    } finally {
+        connection.release();
     }
-    return {message: 'success'};
 }
 
-export {listAllUsers, findUserById, addUser, modifyUser, removeUser};
-  
+const findCatsByUserID = async (id) => {
+    console.log('id', id);
+    const [rows] = await promisePool.execute('SELECT * FROM cats WHERE owner = ?', [id]);
+    console.log('rows', rows);
+    return rows;
+};
+
+export {listAllUsers, findUserById, addUser, modifyUser, removeUser, findCatsByUserID};

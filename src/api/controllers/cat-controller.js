@@ -14,7 +14,9 @@ const getCatById = async (req, res) => {
 };
 
 const postCat = async (req, res) => {
-  const result = await addCat(req.body);
+  console.log('req.body', req.body);
+  console.log('req.file', req.file);
+  const result = await addCat(req.body, req.file);
   if (result.cat_id) {
     res.status(201);
     res.json({message: 'New cat added.', result});

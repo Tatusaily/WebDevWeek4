@@ -1,4 +1,4 @@
-import { addUser, findUserById, listAllUsers } from "../models/user-model";
+import { addUser, findUserById, listAllUsers, findCatsByUserID} from "../models/user-model.js";
 
 const getUser = async (req, res) => {
   res.json(await listAllUsers());
@@ -37,4 +37,13 @@ const deleteUser = async (req, res) => {
     res.json({ message: "User item deleted.", result });
 }
 
-export { getUser, getUserById, postUser, putUser, deleteUser };
+const getCatByUserID = async (req, res) => {
+  const cats = await findCatsByUserID(req.params.id);
+  if (cats) {
+    res.json(cats);
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+export { getUser, getUserById, postUser, putUser, deleteUser, getCatByUserID};

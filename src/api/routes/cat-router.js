@@ -10,14 +10,14 @@ import multer from 'multer';
 
 const catRouter = express.Router();
 
-const storage = multer.diskStorage({
+const mystorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E5);
     const uniquePrefix = (req.body.name).replaceAll(/,|-|_|'/gi, '').toLowerCase();
-    let extension = file.originalname.split('.').pop(); // Or mimetype?
+    let extension = file.originalname.split(".").pop(); // Or mimetype?
     if (extension !== ('jpg' || 'jpeg' || 'png' || 'gif')) {
       extension = 'jpg';
     }
@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({dest: 'uploads/'});
+const upload = multer({dest: 'uploads/', mystorage});
 
 catRouter.route('/')
   .get(getCat)
