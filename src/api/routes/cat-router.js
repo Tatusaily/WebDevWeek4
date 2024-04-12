@@ -10,7 +10,7 @@ import multer from 'multer';
 
 const catRouter = express.Router();
 
-const storage = multer.diskStorage({
+const myStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
@@ -27,11 +27,11 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({dest: 'uploads/'});
+const upload = multer({dest: 'uploads/', myStorage});
 
 catRouter.route('/')
   .get(getCat)
-  .post(upload.single("file"), postCat);
+  .post(upload.single("filename"), postCat);
 
 catRouter.route('/:id')
   .get(getCatById)
