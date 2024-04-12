@@ -1,3 +1,2 @@
-
-GET http://localhost:3000/api/v1/cats HTTP/1.1
+GET http://localhost:3000/api/v1/cats
 ```
