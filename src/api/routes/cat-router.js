@@ -1,5 +1,5 @@
 import express from 'express';
-import createThumbnail from '../../middlewares.js';
+import {createThumbnail} from '../../middlewares.js';
 import {
   getCat,
   getCatById,
