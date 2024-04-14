@@ -1,4 +1,5 @@
 import promisePool from "../../utils/database.js";
+import bcrypt from 'bcrypt';
 
 const listAllUsers = async () => {
     const [rows] = await promisePool.query('SELECT * FROM users');
@@ -16,6 +17,7 @@ const findUserById = async (id) => {
 };
 
 const addUser = async (user) => {
+    user.password = await bcrypt.hash(user.password, 10);
     const {name, username, email, role, password} = user;
     const sql = `INSERT INTO users (name, username, email, role, password)
                  VALUES (?, ?, ?, ?, ?)`;
