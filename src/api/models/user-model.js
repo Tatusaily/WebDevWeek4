@@ -65,7 +65,6 @@ const removeUser = async (id) => {
 }
 
 const findCatsByUserID = async (id) => {
-    console.log('id', id);
     const [rows] = await promisePool.execute('SELECT * FROM cats WHERE owner = ?', [id]);
     console.log('rows', rows);
     return rows;
