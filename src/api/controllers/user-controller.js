@@ -24,14 +24,14 @@ const postUser = async (req, res) => {
 };
 
 const putUser = async (req, res) => {
-  // PLACEHOLDER
-  // DOES NOT WORK
+  const result = await modifyUser(req.body, req.params.id, res.locals.user);
+
   res.sendStatus(200);
   res.json({ message: "User item updated.", result });
 }
 
 const deleteUser = async (req, res) => {
-  const result = await removeUser(req.params.id);
+  const result = await removeUser(req.params.id, res.locals.user);
   if (!result) {
     res.sendStatus(404);
   } else {

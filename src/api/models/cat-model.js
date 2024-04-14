@@ -24,7 +24,8 @@ const findCatById = async (id) => {
    return rows[0];
 };
 
-const addCat = async (cat, file) => {
+const addCat = async (cat, file, user) => {
+   if (user.role === 'admin' || user.user_id === cat.owner) {
    const {cat_name, weight, owner,birthdate} = cat;
    const filename = file.filename;
    const sql = `INSERT INTO cats (cat_name, weight, owner, filename, birthdate)
@@ -35,21 +36,44 @@ const addCat = async (cat, file) => {
       return false;
    }
    return {cat_id: rows[0].insertId};
+   } else {
+      return {message: 'Unauthorized'};
+   }
 };
 
-const modifyCat = async (cat, id) => {
-   const sql = promisePool.format(`UPDATE cats SET ? WHERE cat_id = ?`, [cat, id]);
+const modifyCat = async (cat, id, user) => {
+   // user = userid
+   // cat = new incomin cat data
+   // auth
+   const owner_id = await promisePool.execute(`SELECT owner FROM cats WHERE cat_id = ?`, [id]);
+   console.log('owner_id', owner_id);
+   if (user.role !== 'admin' && user.user_id !== owner_id){
+      return {message: 'Unauthorized'};
+   }
+   let sql = promisePool.format(`UPDATE cats SET ? WHERE cat_id = ? AND owner = ?`, [cat, id, user.user_id]);
+   if (user.role === 'admin') {
+      sql = promisePool.format(`UPDATE cats SET ? WHERE cat_id = ?`, [cat, id]);
+   }
    const rows = await promisePool.execute(sql);
-   console.log('rows', rows);
+   // console.log('rows', rows);
    if (rows[0].affectedRows === 0) {
       return false;
    }
    return {message: 'success'};
 };
 
-const removeCat = async (id) => {
-   const [rows] = await promisePool.execute('DELETE FROM cats WHERE cat_id = ?', [id]);
-   console.log('rows', rows);
+const removeCat = async (id, user) => {
+   const owner_id = await promisePool.execute(`SELECT owner FROM cats WHERE cat_id = ?`, [id]);
+   console.log('owner_id', owner_id);
+   if (user.role !== 'admin' && user.user_id !== owner_id){
+      return {message: 'Unauthorized'};
+   }
+   let sql = promisePool.format('DELETE FROM cats WHERE cat_id = ? AND owner = ?', [id, user.user_id]);
+   if (user.role === 'admin') {
+      sql = promisePool.format('DELETE FROM cats WHERE cat_id = ?', [id]);
+   }
+   const rows = await promisePool.execute(sql);
+   // console.log('rows', rows);
    if (rows.affectedRows === 0) {
       return false;
    }

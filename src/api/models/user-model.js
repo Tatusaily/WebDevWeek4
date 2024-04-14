@@ -51,8 +51,12 @@ const addUser = async (user) => {
     return {user_id: rows[0].insertId};
 };
 
-const modifyUser = async (user, id) => {
-    const sql = promisePool.format(`UPDATE users SET ? WHERE user_id = ?`, [user, id]);
+const modifyUser = async (user, id, authuser) => {
+    // Only admin can modify other users
+    if (authuser.role !== 'admin' && authuser.user_id !== id) {
+        return {message: 'Unauthorized'};
+    }
+    const sql = promisePool.format(`UPDATE users SET ? WHERE user_id = ? AND user_id = =`, [user, id, authuser.user_id]);
     const rows = await promisePool.execute(sql);
     console.log('rows', rows);
     if (rows[0].affectedRows === 0) {
@@ -61,9 +65,11 @@ const modifyUser = async (user, id) => {
     return {message: 'success'};
 }
 
-const removeUser = async (id) => {
+const removeUser = async (id, authuser) => {
     const connection = await promisePool.getConnection();
-
+    if (authuser.role !== 'admin' && authuser.user_id !== id) {
+        return {message: 'Unauthorized'};
+    }
     try{
         // Remove user's cats before removing the user
         await connection.beginTransaction();
