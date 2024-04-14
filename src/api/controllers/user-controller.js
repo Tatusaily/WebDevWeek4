@@ -31,10 +31,13 @@ const putUser = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-  // PLACEHOLDER
-  // DOES NOT WORK
-  res.sendStatus(200);
+  const result = await removeUser(req.params.id);
+  if (!result) {
+    res.sendStatus(404);
+  } else {
+    res.sendStatus(200);
     res.json({ message: "User item deleted.", result });
+  }
 }
 
 const getCatByUserID = async (req, res) => {

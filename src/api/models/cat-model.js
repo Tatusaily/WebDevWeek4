@@ -14,12 +14,14 @@ const listAllCats = async () => {
 };
 
 const findCatById = async (id) => {
-    const [rows] = await promisePool.execute('SELECT * FROM cats WHERE cats_id = ?', [id]);
-    console.log('rows', rows);
-     if (rows.length === 0) {
-        return false;
-     }
-     return rows[0];
+   const [rows] = await promisePool.execute('SELECT * FROM cats WHERE cat_id = ?', [id]);
+   if (rows.length === 0) {
+      return false;
+   }
+   const owner = await promisePool.query('SELECT * FROM users where user_id = ?', [rows[0].owner]);
+   rows[0].owner = owner[0][0].name;
+   console.log('rows', rows);
+   return rows[0];
 };
 
 const addCat = async (cat, file) => {
