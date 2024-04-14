@@ -17,17 +17,17 @@ const findCatById = async (id) => {
      return rows[0];
 };
 
-const addCat = async (cat) => {
-  const {cat_name, weight, owner, filename, birthdate} = cat;
-  const sql = `INSERT INTO cats (cat_name, weight, owner, filename, birthdate)
-               VALUES (?, ?, ?, ?, ?)`;
-  const params = [cat_name, weight, owner, filename, birthdate];
-    const rows = await promisePool.execute(sql, params);
-    console.log('rows', rows);
-     if (rows[0].affectedRows === 0) {
-        return false;
-     }
-    return {cat_id: rows[0].insertId};
+const addCat = async (cat, file) => {
+   const {cat_name, weight, owner,birthdate} = cat;
+   const filename = file.filename;
+   const sql = `INSERT INTO cats (cat_name, weight, owner, filename, birthdate)
+                  VALUES (?, ?, ?, ?, ?)`;   
+   const params = [cat_name, weight, owner, filename, birthdate];
+   const rows = await promisePool.execute(sql, params);
+   if (rows[0].affectedRows === 0) {
+      return false;
+   }
+   return {cat_id: rows[0].insertId};
 };
 
 const modifyCat = async (cat, id) => {
