@@ -7,6 +7,27 @@ const listAllUsers = async () => {
     return rows;
 };
 
+const authenticateUser = async (data) => {
+    console.log('Authenticating:')
+    const {username, password} = data;
+    const user = await findUserByUsername(username);
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+        return false;
+    }
+    return user;
+};
+
+const findUserByUsername = async (username) => {
+    const sql = 'SELECT * FROM users WHERE username = ?';
+    const [rows] = await promisePool.execute(sql, [username]);
+    if (rows.length === 0) {
+        console.log('User not found');
+        return false;
+    }
+    return rows[0];
+};
+
 const findUserById = async (id) => {
     const [rows] = await promisePool.execute('SELECT * FROM users WHERE user_id = ?', [id]);
     console.log('rows', rows);
@@ -72,4 +93,4 @@ const findCatsByUserID = async (id) => {
     return rows;
 };
 
-export {listAllUsers, findUserById, addUser, modifyUser, removeUser, findCatsByUserID};
+export {listAllUsers, findUserById, addUser, modifyUser, removeUser, findCatsByUserID, authenticateUser};
