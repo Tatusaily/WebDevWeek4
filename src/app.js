@@ -3,6 +3,7 @@ import api from './api/index.js';
 
 const app = express();
 
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use('/public', express.static('public'));
@@ -12,5 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1', api);
+
+app.use(cors());
 
 export default app;

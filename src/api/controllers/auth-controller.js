@@ -1,4 +1,4 @@
-import {authenticateUser} from '../models/user-model.js'; 
+import {authenticateUser, addUser} from '../models/user-model.js'; 
 import jwt from 'jsonwebtoken';
 
 
@@ -28,4 +28,14 @@ const getMe = async (req, res) => {
     }
   };
 
-export {login, getMe};
+const register = async (req, res) => {
+    const user = await addUser(req.body);
+    if (user.user_id) {
+        res.status(201);
+        res.json({message: "New user added.", user});
+    } else {
+        res.sendStatus(400);
+    }
+};
+
+export {login, getMe, register};
